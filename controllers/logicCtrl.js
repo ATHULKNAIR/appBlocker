@@ -5,7 +5,7 @@ const moment = require('moment')
 
 const logicCtrl = {
 
-///////////////////////////////////////////      APPLICATION LOGIC      ////////////////////////////////////////////
+    ///////////////////////////////////////////      APPLICATION LOGIC      ////////////////////////////////////////////
 
     isBlocked: async (req, res) => {
 
@@ -32,14 +32,14 @@ const logicCtrl = {
                 IsWeekDay = false;
             }
 
-           //   if worktime then, app is blocked
-           //    else, app can be used in limited time
-           
-           //   weekDay ------->  weekDayLimit
-           //   weekEnd ------->  weekEndLimit
+            //   if worktime then, app is blocked
+            //    else, app can be used in limited time
 
-           //  if the Limit is over app becomes blocked , but when app is closed usagetime is updated in mongodb 
-           //  if 
+            //   weekDay ------->  weekDayLimit
+            //   weekEnd ------->  weekEndLimit
+
+            //  if the Limit is over app becomes blocked , but when app is closed usagetime is updated in mongodb 
+            //  if 
 
             const time = moment().format('H:mm')
             const startingTime = schedule.beginWork;
@@ -47,7 +47,7 @@ const logicCtrl = {
             const freeTimeStarts = schedule.restFrom;
             const freeTimeEnds = schedule.restTo;
             let IsWorkTime;
-            if (time > startingTime && time < freeTimeStarts && time > freeTimeEnds && time < endingTime) {
+            if ((startingTime <= time && time <= freeTimeStarts) || (freeTimeEnds<=time && time <= endingTime)) {
                 await Schedule.findOneAndUpdate({ day: today }, { isWorkTime: true })
                 IsWorkTime = true
             } else {
@@ -60,8 +60,9 @@ const logicCtrl = {
                 if (IsWorkTime) {
                     for (let i = 0; i < appArray.length; i++) {
                         await Application.findOneAndUpdate({ _id: appArray[i]._id }, {
-                            isBlocked: true
+                            isBlocked: true , isLimited:false
                         })
+                        res.json({ msg: `${appArray[i].appName} is blocked` })
                     }
 
                 } else {
@@ -69,6 +70,8 @@ const logicCtrl = {
                         await Application.findOneAndUpdate({ _id: appArray[i]._id }, {
                             isBlocked: false, isLimited: true
                         })
+                        res.json({ msg: `${appArray[i].appName} is unblocked but limited` })
+                        
                     }
 
                     ////////////////////////////////  PSEUDO CODE FOR BROWSER USAGE  //////////////////////////
@@ -101,7 +104,7 @@ const logicCtrl = {
                     //      
                     //   }  
 
-                 
+
                 }
             } else {
 
@@ -136,7 +139,7 @@ const logicCtrl = {
             }
 
 
-            res.json("App usage checking....")
+
         } else {
             res.json(`No restrictions mentioned on ${today}`)
         }

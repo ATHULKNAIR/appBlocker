@@ -10,7 +10,7 @@ const userCtrl = {
         try {
 
             const { name, email, password } = req.body
-            const user = await User.findOne({ email })                               // check whether user exists or not
+            const user = await User.findOne({ email:req.body.email })                               // check whether user exists or not
             if (user) {
                 res.status(400).json({ msg: 'User already exists' });
             }

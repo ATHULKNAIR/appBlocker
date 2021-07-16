@@ -24,7 +24,7 @@ const appCtrl = {
             });
 
             await limitedApps.save();                                               // saving to mongodb
-           return res.status(200).json(limitedApps)
+           return res.status(200).json({success:true, msg:"Application added Successfully"})
            
         } catch (err) {
             return res.status(500).json({ msg: err.message })

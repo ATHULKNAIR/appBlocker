@@ -16,7 +16,7 @@ const scheduleCtrl = {
             await User.findOneAndUpdate(req.user.id, {                     // adding schedule id to User collection
                 $push: { schedule: schedule._id }
             });
-            res.status(200).json({ success: true, data: schedule });
+            res.status(200).json({ success: true, msg:"Schedule added Successfully" });
         
         } catch (err) {
             return res.status(500).json({ msg: err.message })
@@ -40,7 +40,7 @@ const scheduleCtrl = {
                 {
                     new: true, runValidators: true
                 })
-                res.status(200).json({msg:"Updated Successfully", data:schedule})
+                res.status(200).json({success:true,msg:" Schedule Updated Successfully"})
         
             } catch (err) {
             return res.statue(500).json({ msg: err.message });
