@@ -1,2 +1,3 @@
 /appBlocker
 node_modules
+.env
